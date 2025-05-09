@@ -1,50 +1,65 @@
 import { Component } from '@angular/core';
+import { Tarefa } from './tarefa';
 import { HttpClient } from '@angular/common/http';
-import { Tarefa } from './tarefas';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  standalone: false // manter como false se estiver usando AppModule
+  standalone: false,
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
   title = 'TODOapp';
   arrayDeTarefas: Tarefa[] = [];
   apiURL: string;
-  https: any;
+  mostrarErro = false;
 
   constructor(private http: HttpClient) {
-    this.apiURL = "https://backend-todoapp-sq5k.onrender.com";
-    this.https = http;
+    this.apiURL = 'https://backend-todoapp-sq5k.onrender.com';
     this.READ_tarefas();
   }
 
   CREATE_tarefa(descricaoNovaTarefa: string) {
-    const novaTarefa = new Tarefa(descricaoNovaTarefa, false);
-    this.https.post<Tarefa>(`${this.apiURL}/api/post`, novaTarefa)
-      .subscribe(resultado => {
-        console.log('Tarefa criada:', resultado);
+    if (!descricaoNovaTarefa || descricaoNovaTarefa.trim() === '') {
+      this.mostrarErro = true;
+      return;
+    }
+
+    this.mostrarErro = false;
+    var novaTarefa = new Tarefa(descricaoNovaTarefa, false);
+    this.http
+      .post<Tarefa>(`${this.apiURL}/api/post`, novaTarefa)
+      .subscribe((resultado) => {
+        console.log(resultado);
+        this.READ_tarefas();
+      });
+  }
+
+  DELETE_tarefa(tarefaASerRemovida: Tarefa) {
+    var indice = this.arrayDeTarefas.indexOf(tarefaASerRemovida);
+    var id = this.arrayDeTarefas[indice]._id;
+    this.http
+      .delete<Tarefa>(`${this.apiURL}/api/delete/${id}`)
+      .subscribe((resultado) => {
+        console.log(resultado);
         this.READ_tarefas();
       });
   }
 
   READ_tarefas() {
-    this.https.get<Tarefa[]>(`${this.apiURL}/api/getALL`)
-      .subscribe(resultado => {
-        this.arrayDeTarefas = resultado;
-      });
+    this.http
+      .get<Tarefa[]>(`${this.apiURL}/api/getAll`)
+      .subscribe((resultado) => (this.arrayDeTarefas = resultado));
   }
 
-  DELETE_tarefa(tarefaASerRemovida: Tarefa) {
-    const indice = this.arrayDeTarefas.indexOf(tarefaASerRemovida);
-    if (indice !== -1 && this.arrayDeTarefas[indice]) {
-      const id = this.arrayDeTarefas[indice]._id;
-      this.https.delete<Tarefa>(`${this.apiURL}/api/delete/${id}`)
-        .subscribe(resultado => {
-          console.log('Tarefa removida:', resultado);
-          this.READ_tarefas();
-        });
-    }
+  UPDATE_tarefa(tarefaAserModificada: Tarefa) {
+    var indice = this.arrayDeTarefas.indexOf(tarefaAserModificada);
+    var id = this.arrayDeTarefas[indice]._id;
+    this.http
+      .patch<Tarefa>(`${this.apiURL}/api/update/${id}`, tarefaAserModificada)
+      .subscribe((resultado) => {
+        console.log(resultado);
+        this.READ_tarefas();
+      });
   }
 }
