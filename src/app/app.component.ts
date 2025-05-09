@@ -15,7 +15,7 @@ export class AppComponent {
   mostrarErro = false;
 
   constructor(private http: HttpClient) {
-    this.apiURL = 'https://apitarefaslucas235182-production.up.railway.app';
+    this.apiURL = 'https://backend-todoapp-y55v.onrender.com';
     this.READ_tarefas();
   }
 
@@ -63,3 +63,4 @@ export class AppComponent {
       });
   }
 }
+
