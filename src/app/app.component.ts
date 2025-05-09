@@ -1,18 +1,20 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Tarefa } from "../tarefa";
+import { Component } from '@angular/core';
+import { Tarefa } from "./tarefa";
+import { HttpClient } from '@angular/common/http';
 
 @Component({
  selector: 'app-root',
  templateUrl: './app.component.html',
+ standalone: false,
  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  emEdicao = false;
- @Input() tarefa: Tarefa = new Tarefa("", false);
- @Output() removeTarefa = new EventEmitter();
+ 
  title = 'TODOapp';
+ 
  arrayDeTarefas: Tarefa[] = [];
  apiURL : string
+  https: any;
  
  constructor() {
   this.apiURL = "https:backend-todoapp-sq5k.onrender.com";
@@ -24,16 +26,16 @@ export class AppComponent {
  }
  
  READ_tarefas() {
- this.arrayDeTarefas = [
- new Tarefa("Estudar Frameworks WEB", false),
- new Tarefa("Comer Pizza", false),
- new Tarefa("Ajudar meus pais", false)
- ];
+  this.https.get<Tarefa[]>('${this.apiURL}/api/getAll').subscribe( resultado: Tarefa[]) => this.arrayDeTarefas=resultado);
  }
+
+ DELETE_tarefa(tarefaAserRemovida: Tarefa) 
+ {
+ var indice = this.arrayDeTarefas.indexOf(tarefaAserRemovida);
+ var id = this.arrayDeTarefas[indice]._id;
+ this.https.delete<Tarefa>('${this.apiURL}/api/delete/${id}').subscribe(resultado => { console.log(resultado); this.READ_tarefas(); });
+
+ }
+
+
 }
-
-DELETE_tarefa(tarefaAserRemovida : Tarefa) {
- this.arrayDeTarefas.splice(this.arrayDeTarefas.indexOf(tarefaAserRemovida), 1);
-}
-
-
