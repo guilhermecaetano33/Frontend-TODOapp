@@ -15,7 +15,7 @@ export class AppComponent {
   mostrarErro = false;
 
   constructor(private http: HttpClient) {
-    this.apiURL = 'https://backend-todoapp-sq5k.onrender.com';
+    this.apiURL = 'https://backend-todoapp-1-u2uu.onrender.com';
     this.READ_tarefas();
   }
 
