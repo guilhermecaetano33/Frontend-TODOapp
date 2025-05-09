@@ -12,13 +12,17 @@ export class AppComponent {
  @Output() removeTarefa = new EventEmitter();
  title = 'TODOapp';
  arrayDeTarefas: Tarefa[] = [];
+ apiURL : string
+ 
  constructor() {
- this.READ_tarefas();
+  this.apiURL = "https:backend-todoapp-sq5k.onrender.com";
+  this.READ_tarefas();
  }
  CREATE_tarefa(descricaoNovaTarefa: string) {
- var novaTarefa = new Tarefa(descricaoNovaTarefa, false);
- this.arrayDeTarefas.unshift(novaTarefa);
+  var novaTarefa = new Tarefa(descricaoNovaTarefa, false);
+ this.https.post<Tarefa>('${this.apiURL}/api/post', novaTarefa).subscribe(resultado => { console.log(resultado); this.READ_tarefas(); });
  }
+ 
  READ_tarefas() {
  this.arrayDeTarefas = [
  new Tarefa("Estudar Frameworks WEB", false),
