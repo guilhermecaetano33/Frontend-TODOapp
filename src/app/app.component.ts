@@ -15,7 +15,7 @@ export class AppComponent {
   mostrarErro = false;
 
   constructor(private http: HttpClient) {
-    this.apiURL = 'https://backend-todoapp-1-u2uu.onrender.com';
+    this.apiURL = 'https://apitarefaslucas235182-production.up.railway.app';
     this.READ_tarefas();
   }
 
